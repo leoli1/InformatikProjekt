@@ -2,6 +2,7 @@ import java.util.*;
 
 import org.newdawn.slick.*;
 //test
+import org.newdawn.slick.geom.Vector2f;
 
 
 public class Main extends BasicGame{
@@ -39,16 +40,24 @@ public class Main extends BasicGame{
 		Main.ui = new UI();
 		ui.setupUI();
 		Main.player = new Player();
+		new Obstacle(new Vector2f(100,100));
+		new Obstacle(new Vector2f(1000,400));
+		new Obstacle(new Vector2f(300,600));
 		
 	}
 	@Override
 	public void update(GameContainer gc, int arg1) throws SlickException {
 		float dTime = (float) ((Utils.getTime()-lastFrameTime)/1000000000.0);
 		lastFrameTime = Utils.getTime();
-		//dTime /= 1000.0;
-		for (GameObject go:gameObjects)
+		
+		ArrayList<GameObject> gos = (ArrayList<GameObject>) gameObjects.clone();
+		for (GameObject go:gos)
 		{
 			go.update(dTime);
+			if (go.shape!=null){
+				go.shape.setCenterX(Utils.getSlickCoordinates(go.position).x);
+				go.shape.setCenterY(Utils.getSlickCoordinates(go.position).y);
+			}
 		}
 	}
 	@Override

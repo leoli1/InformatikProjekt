@@ -11,10 +11,19 @@ public abstract class GameObject {
 	public String file;
 	public Image img;
 	
+	public Shape shape = null;
+	
+	public boolean drawShape = true;
+	
 	
 	public GameObject()
 	{
 		Main.gameObjects.add(this);
+	}
+	public GameObject(Vector2f pos)
+	{
+		Main.gameObjects.add(this);
+		this.position = pos;
 	}
 	
 	public void loadImage() throws SlickException{
@@ -25,14 +34,19 @@ public abstract class GameObject {
 		loadImage();
 	}
 	
-	public void update(float dTime){}
+	public void update(float dTime){
+	}
 	public void render(Graphics g){
 		if (img != null)
 		{
 			
 			img.setRotation(rotation);
 			if (tag=="ui"){img.drawCentered(position.x, position.y);}
-			else {img.drawCentered(position.x, Main.app.getHeight()-position.y);}
+			else {img.drawCentered(Utils.getSlickCoordinates(position).x,Utils.getSlickCoordinates(position).y);}
+		}
+		if (drawShape==true && shape!=null)
+		{
+			g.draw(shape);
 		}
 	}
 	

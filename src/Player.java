@@ -1,6 +1,6 @@
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.geom.*;
 
 
 public class Player extends GameObject{
@@ -8,10 +8,16 @@ public class Player extends GameObject{
 	public Spaceship spaceship;
 	
 	public float speed = 0;
-	public final float speedAccel = 30;
-	public final float maxSpeed = 2;
-	public final float rotationAccel = 30;
+	public final float speedAccel = 15;
+	public final float maxSpeed = 3;
+	public final float rotationAccel = 75;
 	
+	
+	public final float torpedoRechargeTime = 1;
+	public float lastTorpedoTime =0;
+	
+	
+	public float hp=100;
 	
 	public Player() throws SlickException{
 		this.position = new Vector2f(0,0);
@@ -25,6 +31,7 @@ public class Player extends GameObject{
 		spaceship.loadImage("Resources/player_img.png");
 		spaceship.name = "Spaceship";
 		spaceship.position = this.position;
+		spaceship.shape = new Circle(0,0,spaceship.img.getHeight()/2);
 		
 	}
 	
@@ -43,10 +50,17 @@ public class Player extends GameObject{
 		if( in.isKeyDown(Input.KEY_D)){
 			rotation+=rotationAccel*dtime;
 		}
+		
+		if ( in.isKeyDown(Input.KEY_SPACE)){
+			if ((float) ((Utils.getTime()-lastTorpedoTime)/1000000000.0)>torpedoRechargeTime){
+				new Torpedo();
+				lastTorpedoTime = Utils.getTime();
+			}	
+		}
+		
 		speed = Utils.clamp(speed, -maxSpeed, maxSpeed);
 		
-		position.x += speed*Math.sin(Math.toRadians(rotation));
-		position.y += speed*Math.cos(Math.toRadians(rotation));
+		position = Utils.moveWithRotation(position, rotation, speed);
 		spaceship.rotation = this.rotation;
 		spaceship.position = this.position;
 	}

@@ -3,6 +3,7 @@ import java.util.*;
 import org.newdawn.slick.geom.Vector2f;
 
 
+
 public class UI extends GameObject {
 	
 	public static ArrayList<UI> UIs = new ArrayList<UI>();
@@ -13,7 +14,7 @@ public class UI extends GameObject {
 	}
 	
 	public void setupUI(){
-		Text.newText("asdf", new Vector2f(0,0), "SpaceshipText");
+		Text.newText("asdf", new Vector2f(0,0), Texts.SpaceshipVelocity);
 	}
 	
 	public void update(){
