@@ -20,17 +20,17 @@ public class Player extends GameObject{
 	public float hp=100;
 	
 	public Player() throws SlickException{
-		this.position = new Vector2f(0,0);
+		this.localPosition = new Vector2f(0,0);
 		setupPlayer();
 	}
 	public void setupPlayer() throws SlickException{
 		this.name = "Player";
-		this.position = new Vector2f(640,360);
+		this.localPosition = new Vector2f(300,200);
 		
 		spaceship = new Spaceship();
 		spaceship.loadImage("Resources/player_img.png");
 		spaceship.name = "Spaceship";
-		spaceship.position = this.position;
+		spaceship.localPosition = this.localPosition;
 		spaceship.shape = new Circle(0,0,spaceship.img.getHeight()/2);
 		
 	}
@@ -45,10 +45,10 @@ public class Player extends GameObject{
 			speed-=speedAccel*dtime;
 		}
 		if( in.isKeyDown(Input.KEY_A)){
-			rotation-=rotationAccel*dtime;
+			localRotation-=rotationAccel*dtime;
 		}
 		if( in.isKeyDown(Input.KEY_D)){
-			rotation+=rotationAccel*dtime;
+			localRotation+=rotationAccel*dtime;
 		}
 		
 		if ( in.isKeyDown(Input.KEY_SPACE)){
@@ -60,8 +60,9 @@ public class Player extends GameObject{
 		
 		speed = Utils.clamp(speed, -maxSpeed, maxSpeed);
 		
-		position = Utils.moveWithRotation(position, rotation, speed);
-		spaceship.rotation = this.rotation;
-		spaceship.position = this.position;
+		localPosition = Utils.moveWithRotation(localPosition, localRotation, speed);
+		spaceship.localRotation = this.localRotation;
+		spaceship.localPosition = this.localPosition;
+		//System.out.println(Camera.camera.convertWorldToScreenPosition(this.getPosition()));
 	}
 }

@@ -9,6 +9,7 @@ public class UI extends GameObject {
 	public static ArrayList<UI> UIs = new ArrayList<UI>();
 	
 	public UI(){
+		this.parent = Camera.camera;
 		UI.UIs.add(this);
 		this.tag = "UI";
 	}

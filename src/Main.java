@@ -8,7 +8,7 @@ import org.newdawn.slick.geom.Vector2f;
 public class Main extends BasicGame{
 
 	public static Input input;
-	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+	//public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
 	public static UI ui;
 	public static Player player;
 	public static AppGameContainer app;
@@ -37,6 +37,9 @@ public class Main extends BasicGame{
 		lastFrameTime=Utils.getTime();
 		input = gc.getInput();
 		
+		new World();
+		new Camera();
+		
 		Main.ui = new UI();
 		ui.setupUI();
 		Main.player = new Player();
@@ -50,19 +53,22 @@ public class Main extends BasicGame{
 		float dTime = (float) ((Utils.getTime()-lastFrameTime)/1000000000.0);
 		lastFrameTime = Utils.getTime();
 		
-		ArrayList<GameObject> gos = (ArrayList<GameObject>) gameObjects.clone();
+		ArrayList<GameObject> gos = (ArrayList<GameObject>) GameObject.gameObjects.clone();
 		for (GameObject go:gos)
 		{
 			go.update(dTime);
-			if (go.shape!=null){
+			/*if (go.shape!=null){
+				Vector2f shapePos = Camera.camera.convertWorldToScreenPosition(go.getPosition());
+				go.shape.setCenterX(shapePos.x);
+				go.shape.setCenterY(shapePos.y);
 				go.shape.setCenterX(Utils.getSlickCoordinates(go.position).x);
 				go.shape.setCenterY(Utils.getSlickCoordinates(go.position).y);
-			}
+			}*/
 		}
 	}
 	@Override
 	public void render(GameContainer gc, Graphics g) throws SlickException {
-		for (GameObject go:gameObjects)
+		for (GameObject go:GameObject.gameObjects)
 		{
 			go.render(g);
 		}

@@ -15,18 +15,18 @@ public class Text extends UI {
 	
 	public static void newText(String t, Vector2f pos, String name){
 		Text te = new Text(t);
-		te.position = pos;
+		te.localPosition = pos;
 		te.name = name;
 	}
 	public static void newText(String t, Vector2f pos, Texts tID){
 		Text te = new Text(t);
-		te.position = pos;
+		te.localPosition = pos;
 		te.textID = tID;
 	}
 	
 	
 	public void render(Graphics g){
-		g.drawString(text, position.x, position.y);
+		g.drawString(text, localPosition.x, localPosition.y);
 	}
 	public void update(float dtime){
 		if (this.textID==Texts.SpaceshipVelocity){

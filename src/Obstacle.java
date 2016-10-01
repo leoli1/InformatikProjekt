@@ -11,7 +11,7 @@ public class Obstacle extends GameObject {
 	}
 
 	public Obstacle(Vector2f position) {
-		this.position = position;
+		this.localPosition = position;
 		this.shape = new Circle(0,0, (float)(Math.random()*100+30));
 	}
 }
