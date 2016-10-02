@@ -6,16 +6,17 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class UI extends GameObject {
 	
+	public static UI ui;
 	public static ArrayList<UI> UIs = new ArrayList<UI>();
 	
 	public UI(){
-		this.parent = Camera.camera;
+		//this.setParent(Camera.camera);
 		UI.UIs.add(this);
 		this.tag = "UI";
 	}
 	
 	public void setupUI(){
-		Text.newText("asdf", new Vector2f(0,0), Texts.SpaceshipVelocity);
+		Text.newText("", new Vector2f(0,0), Texts.SpaceshipVelocity);
 	}
 	
 	public void update(){

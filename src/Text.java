@@ -30,7 +30,7 @@ public class Text extends UI {
 	}
 	public void update(float dtime){
 		if (this.textID==Texts.SpaceshipVelocity){
-			this.text = "Speed: "+Float.toString(Main.player.speed);
+			this.text = "Speed: "+Float.toString(Player.player.speed); // text mit der geschwindigkeit von spaceship
 		}
 	}
 

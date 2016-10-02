@@ -6,7 +6,9 @@ public class Camera extends GameObject {
 	
 	public static Camera camera;
 	
-	public float width;
+	public final double zoomfactor = 0.99; // factor, der bestimmt, wie stark rein- bzw rausgezoomt wird
+	
+	public float width; // breite und höhe der des camera bereichs
 	public float height;
 	private float origin_width;
 	private float origin_height;
@@ -24,33 +26,35 @@ public class Camera extends GameObject {
 	{
 		this.scale = scale;
 		this.width = this.origin_width*this.scale;
-		this.height = this.origin_height*this.scale;
+		this.height = this.origin_height*this.scale; // breite und höhe entsprechend angepasst, damit das verhältnis noch stimmt
 	}
 	
-	public Vector2f convertWorldToScreenPosition(Vector2f world_pos) // NOCH OHNE CAMROTATION
+	public Vector2f convertWorldToScreenPosition(Vector2f world_pos) // NOCH OHNE CAMROTATION 
 	{
 		Vector2f cam_pos = this.getPosition();
-		//Vector2f diffToCamCenter = new Vector2f(world_pos.x-cam_pos.x, world_pos.y-cam_pos.y);
-		float camMinX = (float) (cam_pos.x-this.width*0.5);
-		//float camMaxX = (float) (cam_pos.x+this.width*0.5);
-		float camMinY = (float) (cam_pos.y-this.height*0.5);
-		//float camMaxY = (float) (cam_pos.y+this.width*0.5);
 		
-		float relativeXPosition = (world_pos.x-camMinX)/this.width;
+		float camMinX = (float) (cam_pos.x-this.width*0.5); // x-koordinate, des linken camera-rands
+		float camMinY = (float) (cam_pos.y-this.height*0.5); // x-koordinate, des oberen camera-rands
+		
+		float relativeXPosition = (world_pos.x-camMinX)/this.width; // x-position im camera feld 0<x<1
 		float relativeYPosition = (world_pos.y-camMinY)/this.height;
 		
-		float newX = relativeXPosition*Main.app.getWidth();
-		float newY = Main.app.getHeight()-relativeYPosition*Main.app.getHeight();
+		float newX = relativeXPosition*Main.app.getWidth();  // entsprechend auf die screen werte angepasst
+		float newY = Main.app.getHeight()-relativeYPosition*Main.app.getHeight(); // die screen-y-koordinaten starten in der ecke oben links, 
+		//also muss die y-koordinate nochmal von der höhe abgezogen werden
 		return new Vector2f(newX, newY);
 	}
 	
 	public void update(float dtime){
 		Input in = Main.input;
 		if( in.isKeyDown(Input.KEY_E)){
-			this.setScale((float) (this.scale*0.99));
+			this.setScale((float) (this.scale*zoomfactor)); // bei "e" wird reingezoomt, 
+		}
+		if ( in.isKeyDown(Input.KEY_R)){
+			this.setScale((float) (this.scale*(1/zoomfactor))); // bei "r" raus
 		}
 		
-		this.localPosition = Main.player.getPosition();
+		this.localPosition = Player.player.getPosition(); // zentrum der camera ist die spieler position
 		
 	}
 
