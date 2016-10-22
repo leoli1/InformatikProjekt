@@ -1,3 +1,4 @@
+package mainPackage;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.geom.Vector2f;
 

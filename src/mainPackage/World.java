@@ -1,3 +1,4 @@
+package mainPackage;
 import org.newdawn.slick.geom.Vector2f;
 
 
@@ -11,7 +12,7 @@ public class World extends GameObject {// urpsrung
 		this.localPosition = new Vector2f(0,0);
 		this.name = "World";
 		World.world = this;
-		this.parent = null;
+		this.setParent(null);
 	}
 
 }

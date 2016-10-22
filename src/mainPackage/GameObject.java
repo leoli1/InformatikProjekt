@@ -1,3 +1,4 @@
+package mainPackage;
 import java.util.ArrayList;
 
 import org.newdawn.slick.geom.*;
@@ -8,6 +9,8 @@ public abstract class GameObject {
 	
 	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>(); // liste von allen gos
 	
+	public boolean updateInFrame = false;
+	
 	public String tag=""; 
 	public String name; 
 	
@@ -16,7 +19,7 @@ public abstract class GameObject {
 	public boolean autoCalcPosition = false; // ob die neue position in abhängigkeit von velocity und speed automatisch berechnet 
 	// werden soll oder ob die subclasses von GO das selbst übernehmen, falls noch andere Parameter zu berücksichtigen sind
 	
-	private Vector2f position; // globale position des objekts
+	private Vector2f position = new Vector2f(); // globale position des objekts
 	public Vector2f localPosition=new Vector2f(0,0); // lokale position, relativ zum parent
 	
 	private float rotation=0; // globale rotation des objekts
@@ -31,15 +34,16 @@ public abstract class GameObject {
 	public Shape shape = null; // shape für physics debugging etc
 	public boolean drawShape = true; // ob das shape gezeichnet werden soll (debugging)
 	
-	public GameObject parent; // parent des objekts
+	private GameObject parent; // parent des objekts
 	public ArrayList<GameObject> children = new ArrayList<GameObject>(); // alle kinder von diesem go
 	
 	
 	public GameObject()
 	{
-		GameObject.gameObjects.add(this); // diese instanz von GO wird der liste aller gos hinzugefügt
+		//GameObject.gameObjects.add(this); // diese instanz von GO wird der liste aller gos hinzugefügt
+		Scene.activeScene.addObject(this);
 		if (World.world!=null){ // sofern das GO world bereits initialisiert wurde
-			this.setParent(World.world); // wird das objekt direkt word untergeordnet
+			this.setParent(World.world); // wird das objekt direkt world untergeordnet
 		}
 	}
 	public GameObject(Vector2f pos)
@@ -48,26 +52,46 @@ public abstract class GameObject {
 		this.position = pos;
 	}
 	
+	public GameObject getParent(){
+		return this.parent;
+	}
+	
 	public void setParent(GameObject p) // ein go wird einem anderen untergeordnet (parent-child)
 	{
 		if (this.parent!=null){ // falls das go bereits einen anderen parent hatte, wird dieses go aus dessen children-liste entfernt
 			this.parent.children.remove(this);
 		}
+		Vector2f pos = this.getPosition();
 		this.parent = p;
-		p.children.add(this);
+		if (p!=null){
+			Vector2f a = p.getPosition();
+			this.localPosition = new Vector2f(pos.x-a.x, pos.y-a.y);
+			p.children.add(this);
+		}
 	}
 	
 	public void setPosition(Vector2f pos)
 	{
-		this.position = pos; 
+		
+		//TODO diese fkt ist nur korrekt, wenn parent.rotation=0
+		this.position = pos;
+		if (this.parent==null){return;}
+		Vector2f ppos = this.parent.getPosition();
+		this.localPosition = new Vector2f(this.position.x-ppos.x, this.position.y-ppos.y);
 	}
 	
 	public Vector2f getPosition() // die globalen koordinaten des gos
 	{
 		if (this.parent==null){return this.position;} // falls es keinen parent hat (=> this = World.world) werden die Urpsprungskoordinaten zurückgegeben
 		Vector2f ppos = this.parent.getPosition(); // die globale pos des parents
-		float newX = ppos.x+(float) ((this.localPosition.x-ppos.x)*Math.cos(this.parent.getRotation())-(this.localPosition.y-ppos.y)*Math.sin(this.parent.getRotation()));
-		float newY = ppos.y+(float) ((this.localPosition.x-ppos.x)*Math.sin(this.parent.getRotation())+(this.localPosition.y-ppos.y)*Math.cos(this.parent.getRotation()));
+		
+		float preRotationGlobalPosX = this.localPosition.x+ppos.x;
+		float preRotationGlobalPosY = this.localPosition.y+ppos.y;
+		
+		float diffX = preRotationGlobalPosX-ppos.x;
+		float diffY = preRotationGlobalPosY-ppos.y;
+		float newX = ppos.x+(float) (diffX*Math.cos(this.parent.getRotation())-diffY*Math.sin(this.parent.getRotation()));
+		float newY = ppos.y+(float) (diffX*Math.sin(this.parent.getRotation())+diffY*Math.cos(this.parent.getRotation()));
 		// in abhängigkeit der rotation des parents wird die position von diesem go berechnet
 		
 		return new Vector2f(newX,newY);
@@ -75,7 +99,7 @@ public abstract class GameObject {
 	public float getRotation() // die globale rotation des go
 	{
 		if (this.parent==null){return this.rotation;} // kein parent => this = World.world -> 0 
-		return this.parent.getRotation()+this.localRotation;
+		return (this.parent.getRotation()+this.localRotation);//%360;
 	}
 	
 	public void setScale(float scale)
@@ -112,7 +136,7 @@ public abstract class GameObject {
 		{
 			img.setCenterOfRotation((float)(img.getWidth()*0.5/Camera.camera.scale), (float)(img.getHeight()*0.5/Camera.camera.scale));
 			// bild wird um sein zentrum (auf dem screen) rotiert
-			img.setRotation(this.getRotation());
+			img.setRotation((float)Math.toDegrees(this.getRotation()));
 			if (tag=="ui"){img.drawCentered(position.x, position.y);}//falls das go ein UI-objekt, bzw. teil des hud, ist, 
 			//müssen keine koordinaten umgerechnet werden
 			else {

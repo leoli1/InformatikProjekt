@@ -1,4 +1,8 @@
+package mainPackage;
 import java.util.*;
+
+import mainPackage.UI.UI;
+import mainPackage.Utils.Utils;
 
 import org.newdawn.slick.*;
 //test
@@ -35,6 +39,10 @@ public class Main extends BasicGame{
 		lastFrameTime=Utils.getTime();
 		input = gc.getInput();
 		
+		Scene s = new Scene();
+		Scene.activeScene = s;
+		
+		
 		new World(); // erstellt das World-object, den kooridatenursprung im spiel
 		new Camera();
 		
@@ -42,9 +50,17 @@ public class Main extends BasicGame{
 		UI.ui = u;
 		UI.ui.setupUI();
 		new Player();
-		new Obstacle(new Vector2f(100,100));// 3 bsp objekte
+		
+		/*new Obstacle(new Vector2f(100,100));// 3 bsp objekte
 		new Obstacle(new Vector2f(1000,400));
-		new Obstacle(new Vector2f(300,600));
+		new Obstacle(new Vector2f(300,600));*/
+		
+		s.addObject(new Obstacle(new Vector2f(100,100)));
+		s.addObject(new Obstacle(new Vector2f(1000,400)));
+		s.addObject(new Obstacle(new Vector2f(300,600)));
+		s.loadScene();
+		
+		
 		
 	}
 	@Override
@@ -57,9 +73,14 @@ public class Main extends BasicGame{
 		
 		for (GameObject go:gos) // schleife durch alle gos
 		{
-			
-			go.update(dTime); // update- und updateposition methode aller gos wird aufgerufen
-			go.updatePosition(dTime);
+			if (!go.updateInFrame){
+				go.updateInFrame = true;
+				go.update(dTime); // update- und updateposition methode aller gos wird aufgerufen
+				go.updatePosition(dTime);
+			}
+		}
+		for (GameObject go:gos){
+			go.updateInFrame=false;
 		}
 	}
 	@Override

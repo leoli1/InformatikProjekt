@@ -1,8 +1,13 @@
+package mainPackage.UI;
+import mainPackage.Player;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
 
+
 enum Texts {
-	SpaceshipVelocity;
+	SpaceshipVelocity,
+	SpaceshipRotation
 }
 
 public class Text extends UI {
@@ -29,8 +34,14 @@ public class Text extends UI {
 		g.drawString(text, localPosition.x, localPosition.y);
 	}
 	public void update(float dtime){
-		if (this.textID==Texts.SpaceshipVelocity){
+		switch (this.textID) {
+		case SpaceshipVelocity:
 			this.text = "Speed: "+Float.toString(Player.player.speed); // text mit der geschwindigkeit von spaceship
+			break;
+		case SpaceshipRotation:
+			this.text = "Rotation: "+Float.toString(Player.player.getRotation());
+		default:
+			break;
 		}
 	}
 
